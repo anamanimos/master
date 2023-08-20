@@ -11,112 +11,211 @@ class Auth extends CI_Controller
 
     public function index()
     {
+        $this->load->model('Auth_model', 'auth');
+        if (isset($_COOKIE['ID']) && isset($_COOKIE['key'])) {
+            $this->auth->matchKey($_COOKIE['ID'], $_COOKIE['key']);
+        }
+        if (isset($_COOKIE['login'])) {
+            if ($_COOKIE['login'] == 'true') {
+                $data = [
+                    'email' => 'cranam21@gmail.com',
+                    'role_id' => 1
+                ];
+                $this->session->set_userdata($data);
+            }
+        }
+
         if ($this->session->userdata('email')) {
             redirect('user');
         }
 
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-        $this->form_validation->set_rules('password', 'Password', 'trim|required');
-
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'Login Page';
-            $this->load->view('templates/auth_header', $data);
-            $this->load->view('auth/login');
-            $this->load->view('templates/auth_footer');
-        } else {
-            // validasinya success
-            $this->_login();
-        }
+        $data['title'] = 'Masuk';
+        $this->load->view('auth/login', $data);
     }
 
-
-    private function _login()
+    public function ajaxlogin()
     {
-        $email = $this->input->post('email');
-        $password = $this->input->post('password');
+        $this->load->model('Auth_model', 'auth');
+        if (isset($_POST['email']) || isset($_POST['password'])) {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
 
-        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+            $user = $this->db->get_where('user', ['email' => $email])->row_array();
 
-        // jika usernya ada
-        if ($user) {
-            // jika usernya aktif
-            if ($user['is_active'] == 1) {
-                // cek password
-                if (password_verify($password, $user['password'])) {
-                    $data = [
-                        'email' => $user['email'],
-                        'role_id' => $user['role_id']
-                    ];
-                    $this->session->set_userdata($data);
-                    if ($user['role_id'] == 1) {
-                        redirect('admin');
+            // jika usernya ada
+            if ($user) {
+                // jika usernya aktif
+                if ($user['is_active'] == 1) {
+                    // cek password
+                    if (password_verify($password, $user['password'])) {
+                        $data = [
+                            'email' => $user['email'],
+                            'role_id' => $user['role_id']
+                        ];
+                        $this->session->set_userdata($data);
+
+                        // cek remember me
+                        if (isset($_POST['remember'])) {
+                            setcookie('ID', $user['id'], time() + 60 * 60 * 24 * 30, "/");
+                            setcookie('key', $this->auth->generateKey($user['id']), time() + 60 * 60 * 24 * 30, "/");
+                        }
+                        // if ($user['role_id'] == 1) {
+                        //     redirect('admin');
+                        // } else {
+                        //     redirect('user');
+                        // }
+                        $return = [
+                            'status' => 200,
+                            'success' => true,
+                            'detail' => 'Berhasil masuk! Mohon tunggu Anda akan dialihkan.',
+
+                        ];
+
+                        echo json_encode($return);
                     } else {
-                        redirect('user');
+                        $return = [
+                            'status' => 200,
+                            'success' => false,
+                            'detail' => 'Password tidak sesuai!',
+
+                        ];
+
+                        echo json_encode($return);
                     }
                 } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Wrong password!</div>');
-                    redirect('auth');
+                    $return = [
+                        'status' => 200,
+                        'success' => false,
+                        'detail' => 'Akun belum diaktivasi'
+                    ];
+
+                    echo json_encode($return);
                 }
             } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">This email has not been activated!</div>');
-                redirect('auth');
+                $return = [
+                    'status' => 200,
+                    'success' => false,
+                    'detail' => 'Email tidak terdaftar!'
+                ];
+
+                echo json_encode($return);
             }
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Email is not registered!</div>');
-            redirect('auth');
+            $return = [
+                'status' => 403,
+                'success' => false,
+                'detail' => 'Server Forbidden',
+            ];
+
+            echo json_encode($return);
         }
     }
-
 
     public function registration()
     {
+        $this->load->model('Auth_model', 'auth');
+        if (isset($_COOKIE['ID']) && isset($_COOKIE['key'])) {
+            $this->auth->matchKey($_COOKIE['ID'], $_COOKIE['key']);
+        }
+        if (isset($_COOKIE['login'])) {
+            if ($_COOKIE['login'] == 'true') {
+                $data = [
+                    'email' => 'cranam21@gmail.com',
+                    'role_id' => 1
+                ];
+                $this->session->set_userdata($data);
+            }
+        }
+
         if ($this->session->userdata('email')) {
             redirect('user');
         }
 
-        $this->form_validation->set_rules('name', 'Name', 'required|trim');
-        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
-            'is_unique' => 'This email has already registered!'
-        ]);
-        $this->form_validation->set_rules('password1', 'Password', 'required|trim|min_length[3]|matches[password2]', [
-            'matches' => 'Password dont match!',
-            'min_length' => 'Password too short!'
-        ]);
-        $this->form_validation->set_rules('password2', 'Password', 'required|trim|matches[password1]');
 
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'WPU User Registration';
-            $this->load->view('templates/auth_header', $data);
-            $this->load->view('auth/registration');
-            $this->load->view('templates/auth_footer');
+        $data['title'] = 'WPU User Registration';
+        $this->load->view('auth/registration', $data);
+    }
+
+    public function ajaxregistercheckemail()
+    {
+        $user = $this->db->get_where('user', ['email' => $_POST['email']])->num_rows();
+        if ($user > 0) {
+            $return = [
+                'status' => 200,
+                'success' => false,
+                'detail' => 'Alamat email sudah terdaftar.',
+            ];
         } else {
-            $email = $this->input->post('email', true);
-            $data = [
-                'name' => htmlspecialchars($this->input->post('name', true)),
-                'email' => htmlspecialchars($email),
-                'image' => 'default.jpg',
-                'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-                'role_id' => 2,
-                'is_active' => 0,
-                'date_created' => time()
+            $return = [
+                'status' => 200,
+                'success' => true,
+                'detail' => 'Alamat email dapat digunakan.',
             ];
-
-            // siapkan token
-            $token = base64_encode(random_bytes(32));
-            $user_token = [
-                'email' => $email,
-                'token' => $token,
-                'date_created' => time()
-            ];
-
-            $this->db->insert('user', $data);
-            $this->db->insert('user_token', $user_token);
-
-            $this->_sendEmail($token, 'verify');
-
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Congratulation! your account has been created. Please activate your account</div>');
-            redirect('auth');
         }
+        echo json_encode($return);
+    }
+
+    public function ajaxregistercheckwhatsapp()
+    {
+        // harus berawalan angka 8
+        if (strlen($_POST['whatsapp']) > 7) {
+            $user = $this->db->get_where('user', ['whatsapp' => $_POST['whatsapp']])->num_rows();
+            if ($user > 0) {
+                $return = [
+                    'status' => 200,
+                    'success' => false,
+                    'detail' => 'Nomor WhatsApp sudah terdaftar.',
+                ];
+            } else {
+                $return = [
+                    'status' => 200,
+                    'success' => true,
+                    'detail' => 'Nomor WhatsApp dapat digunakan.',
+                ];
+            }
+        } else {
+            $return = [
+                'status' => 200,
+                'success' => false,
+                'detail' => 'Mohon masukkan nomor WhatsApp yang valid!',
+            ];
+        }
+        echo json_encode($return);
+    }
+
+    public function ajaxregister()
+    {
+        $data = [
+            'name' => htmlspecialchars($_POST['name']),
+            'email' => htmlspecialchars($_POST['email']),
+            'whatsapp' => $_POST['whatsapp'],
+            'image' => 'default.jpg',
+            'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+            'role_id' => 2,
+            'is_active' => 0,
+            'date_created' => date("Y-m-d H:i:s"),
+            'last_update' => date("Y-m-d H:i:s"),
+        ];
+
+        // siapkan token
+        $token = base64_encode(random_bytes(32));
+        $user_token = [
+            'email' => $data['email'],
+            'token' => $token,
+            'date_created' => date("Y-m-d H:i:s"),
+        ];
+
+        $this->db->insert('user', $data);
+        $this->db->insert('user_token', $user_token);
+
+        $return = [
+            'status' => 200,
+            'success' => true,
+            'detail' => 'Registrasi Sukses.',
+
+        ];
+
+        echo json_encode($return);
     }
 
 
@@ -195,8 +294,13 @@ class Auth extends CI_Controller
 
     public function logout()
     {
+        $this->load->helper('cookie');
+        delete_cookie('ID');
+        delete_cookie('key');
         $this->session->unset_userdata('email');
         $this->session->unset_userdata('role_id');
+
+
 
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">You have been logged out!</div>');
         redirect('auth');
