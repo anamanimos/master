@@ -77,7 +77,7 @@
                             <label class="form-label w-100" for="signupSrPassword" tabindex="0">
                                 <span class="d-flex justify-content-between align-items-center">
                                     <span>Kata Sandi</span>
-                                    <a class="form-label-link mb-0" href="<?= base_url('auth/forgotpassword') ?>">Forgot Password?</a>
+                                    <a class="form-label-link mb-0" href="<?= base_url('auth/forgotpassword') ?>">Lupa Kata sandi?</a>
                                 </span>
                             </label>
 

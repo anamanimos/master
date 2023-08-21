@@ -3,13 +3,13 @@
 
 <head>
     <!--[if gte mso 9]>
-<xml>
-  <o:OfficeDocumentSettings>
-    <o:AllowPNG/>
-    <o:PixelsPerInch>96</o:PixelsPerInch>
-  </o:OfficeDocumentSettings>
-</xml>
-<![endif]-->
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="x-apple-disable-message-reformatting">
@@ -84,7 +84,7 @@
             line-height: inherit;
         }
 
-        a[x-apple-data-detectors='true'] {
+        a[x-apple-data-detectors="true"] {
             color: inherit !important;
             text-decoration: none !important;
         }
@@ -138,7 +138,7 @@
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;padding-bottom:30px;" align="center">
                                                                         <a href="http://app.damaijaya.test/" target="_blank">
-                                                                            <img align="center" border="0" src="https://damaijaya.my.id/wp-content/uploads/2023/08/logo.svg" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 60%;max-width: 288px;" width="288" />
+                                                                            <img align="center" border="0" src="https://damaijaya.my.id/wp-content/uploads/2023/08/logo-2.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 60%;max-width: 288px;" width="288" />
                                                                         </a>
                                                                     </td>
                                                                 </tr>
@@ -183,7 +183,7 @@
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                                                        <img align="center" border="0" src="https://damaijaya.my.id/wp-content/uploads/2023/08/oc-email-verification.svg" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 50%;max-width: 240px;" width="240" />
+                                                                        <img align="center" border="0" src="https://damaijaya.my.id/wp-content/uploads/2023/08/oc-unlock.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 50%;max-width: 240px;" width="240" />
 
                                                                     </td>
                                                                 </tr>
@@ -199,8 +199,8 @@
                                                     <tr>
                                                         <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px;font-family:arial,helvetica,sans-serif;" align="left">
 
-                                                            <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: 'Lato',sans-serif; font-size: 12px; font-weight: 700;">
-                                                                <h1 style="text-align: center; white-space: normal; background-color: #ffffff; line-height: 1.2; color: #1e2022;"><strong>Kode Aktivasi</strong></h1>
+                                                            <h1 style="margin: 0px; line-height: 140%; text-align: center; word-wrap: break-word; font-family: " Lato",sans-serif; font-size: 12px; font-weight: 700;">
+                                                                <h1 style="text-align: center; white-space: normal; background-color: #ffffff; line-height: 1.2; color: #1e2022;"><strong>Kata sandi diubah</strong></h1>
                                                             </h1>
 
                                                         </td>
@@ -213,36 +213,8 @@
                                                     <tr>
                                                         <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 60px 10px;font-family:arial,helvetica,sans-serif;" align="left">
 
-                                                            <div style="font-size: 14px; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                                                <p style="line-height: 140%;"><span style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff; float: none; display: inline; line-height: 19.6px;">Halo Nama, berikut ini adalah kode Aktivasi </span><strong style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff;">Damai Jaya - Super App</strong><span style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff; float: none; display: inline; line-height: 19.6px;"> Anda:</span></p>
-                                                            </div>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                            <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
-
-                                                            <div style="font-size: 42px; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                                                <p style="line-height: 140%;"><strong><span style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff; float: none; display: inline; line-height: 58.8px;">000000</span></strong></p>
-                                                            </div>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                            <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 60px 50px;font-family:arial,helvetica,sans-serif;" align="left">
-
-                                                            <div style="font-size: 14px; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                                                <p style="line-height: 140%;"><span style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff; float: none; display: inline; line-height: 19.6px;">Jangan tunjukkan kode ini kepada siapapun termasuk admin dari </span><strong style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff;">Damai Jaya - Super App</strong></p>
+                                                            <div style="font-size: 14px; line-height: 140%; text-align: center; word-wrap: break-word;margin-bottom:30px">
+                                                                <p style="line-height: 140%;"><span style="color: #677788; text-align: center; white-space: normal; background-color: #ffffff; float: none; display: inline; line-height: 19.6px;">Halo ' . $name . ', Kata sandi akunmu berhasil diubah. Bila kamu tidak mengenali aktivitas ini laporkan pada <strong>cranam21@gmil.com</strong> untuk penanganan lebih lanjut.</p>
                                                             </div>
 
                                                         </td>

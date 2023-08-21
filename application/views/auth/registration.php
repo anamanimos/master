@@ -358,7 +358,7 @@
                                 success: function(data) {
                                     if (data.status == 200 && data.success == true) {
                                         $('#card-repleace').html('');
-                                        $('#card-repleace').append('<div class="text-center"><h1 class="display-3 mb-5">Registrasi Berhasil!</h1><img class="card-img mb-5" src="<?= base_url('assets/svg/illustrations/oc-hi-five.svg') ?>" data-hs-theme-appearance="default" style="max-width: 15rem;"><br /><a href="" class="btn btn-lg btn-primary"><i class="bi bi-envelope-open-heart-fill"></i> &nbsp;&nbsp;Aktivasi lewat Email</a>&nbsp;&nbsp;<a href="" class="btn btn-lg btn-primary"><i class="bi bi-whatsapp"></i> &nbsp;&nbsp;Aktivasi lewat WhatsApp</a></div>');
+                                        $('#card-repleace').append('<div class="text-center"><h1 class="display-3 mb-5">Registrasi Berhasil!</h1><img class="card-img mb-5" src="<?= base_url('assets/svg/illustrations/oc-hi-five.svg') ?>" data-hs-theme-appearance="default" style="max-width: 15rem;"><br /><a href="' + baseurl + 'auth/activate' + '" class="btn btn-lg btn-primary">Aktivasi sekarang</a></div>');
                                     } else {
                                         $('#submit-login').prop("disabled", false);
                                         $('#submit-login').html('');

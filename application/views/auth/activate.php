@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Title -->
-    <title>Masuk | Damai Jaya Super App</title>
+    <title>Aktivasi Akun | Damai Jaya Super App</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<?= base_url('assets/img/icon.png') ?>">
@@ -266,7 +266,7 @@
                             if (data.success == true) {
                                 $('.toast-login-bg').addClass('bg-soft-success');
                                 $('.toast-login-title').html('');
-                                $('.toast-login-title').append('Aktivassi akun berhasil!');
+                                $('.toast-login-title').append('Aktivasi akun berhasil!');
                                 $('.toast-login-body').html('');
                                 $('.toast-login-body').append('Mohon menunggu, Anda akan dialihkan!');
                                 $('.toast-login-icon').html('');
