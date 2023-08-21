@@ -12,7 +12,7 @@ class User extends CI_Controller
     public function index()
     {
         $data['title'] = 'My Profile';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -25,7 +25,7 @@ class User extends CI_Controller
     public function edit()
     {
         $data['title'] = 'Edit Profile';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
 
@@ -63,7 +63,7 @@ class User extends CI_Controller
 
             $this->db->set('name', $name);
             $this->db->where('email', $email);
-            $this->db->update('user');
+            $this->db->update('users');
 
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your profile has been updated!</div>');
             redirect('user');
@@ -74,7 +74,7 @@ class User extends CI_Controller
     public function changePassword()
     {
         $data['title'] = 'Change Password';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->form_validation->set_rules('current_password', 'Current Password', 'required|trim');
         $this->form_validation->set_rules('new_password1', 'New Password', 'required|trim|min_length[3]|matches[new_password2]');
@@ -89,7 +89,7 @@ class User extends CI_Controller
         } else {
             $current_password = $this->input->post('current_password');
             $new_password = $this->input->post('new_password1');
-            if (!password_verify($current_password, $data['user']['password'])) {
+            if (!password_verify($current_password, $data['users']['password'])) {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Wrong current password!</div>');
                 redirect('user/changepassword');
             } else {
@@ -102,7 +102,7 @@ class User extends CI_Controller
 
                     $this->db->set('password', $password_hash);
                     $this->db->where('email', $this->session->userdata('email'));
-                    $this->db->update('user');
+                    $this->db->update('users');
 
                     $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Password changed!</div>');
                     redirect('user/changepassword');

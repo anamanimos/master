@@ -5,13 +5,13 @@ class Auth_model extends CI_Model
 {
     public function generateKey($userid)
     {
-        $user = $this->db->get_where('user', ['id' => $userid])->row_array();
+        $user = $this->db->get_where('users', ['id' => $userid])->row_array();
         return md5($user['password']) . '-' . md5($user['email']) . '-' . md5($user['id']);
     }
 
     public function matchKey($userid, $key)
     {
-        $user = $this->db->get_where('user', ['id' => $userid])->row_array();
+        $user = $this->db->get_where('users', ['id' => $userid])->row_array();
         $trustedkey = md5($user['password']) . '-' . md5($user['email']) . '-' . md5($user['id']);
         if ($trustedkey == $key) {
             $data = [

@@ -15,15 +15,6 @@ class Auth extends CI_Controller
         if (isset($_COOKIE['ID']) && isset($_COOKIE['key'])) {
             $this->auth->matchKey($_COOKIE['ID'], $_COOKIE['key']);
         }
-        if (isset($_COOKIE['login'])) {
-            if ($_COOKIE['login'] == 'true') {
-                $data = [
-                    'email' => 'cranam21@gmail.com',
-                    'role_id' => 1
-                ];
-                $this->session->set_userdata($data);
-            }
-        }
 
         if ($this->session->userdata('email')) {
             redirect('user');
@@ -40,53 +31,39 @@ class Auth extends CI_Controller
             $email = $_POST['email'];
             $password = $_POST['password'];
 
-            $user = $this->db->get_where('user', ['email' => $email])->row_array();
+            $user = $this->db->get_where('users', ['email' => $email])->row_array();
 
-            // jika usernya ada
+            // Jika usernya ada
             if ($user) {
-                // jika usernya aktif
-                if ($user['is_active'] == 1) {
-                    // cek password
-                    if (password_verify($password, $user['password'])) {
-                        $data = [
-                            'email' => $user['email'],
-                            'role_id' => $user['role_id']
-                        ];
-                        $this->session->set_userdata($data);
+                if (password_verify($password, $user['password'])) {
+                    $data = [
+                        'email' => $user['email'],
+                        'role_id' => $user['role_id']
+                    ];
+                    $this->session->set_userdata($data);
 
-                        // cek remember me
-                        if (isset($_POST['remember'])) {
-                            setcookie('ID', $user['id'], time() + 60 * 60 * 24 * 30, "/");
-                            setcookie('key', $this->auth->generateKey($user['id']), time() + 60 * 60 * 24 * 30, "/");
-                        }
-                        // if ($user['role_id'] == 1) {
-                        //     redirect('admin');
-                        // } else {
-                        //     redirect('user');
-                        // }
-                        $return = [
-                            'status' => 200,
-                            'success' => true,
-                            'detail' => 'Berhasil masuk! Mohon tunggu Anda akan dialihkan.',
-
-                        ];
-
-                        echo json_encode($return);
-                    } else {
-                        $return = [
-                            'status' => 200,
-                            'success' => false,
-                            'detail' => 'Password tidak sesuai!',
-
-                        ];
-
-                        echo json_encode($return);
+                    // cek remember me
+                    if (isset($_POST['remember'])) {
+                        setcookie('ID', $user['id'], time() + 60 * 60 * 24 * 30, "/");
+                        setcookie('key', $this->auth->generateKey($user['id']), time() + 60 * 60 * 24 * 30, "/");
                     }
+                    // if ($user['role_id'] == 1) {
+                    //     redirect('admin');
+                    // } else {
+                    //     redirect('user');
+                    // }
+                    $return = [
+                        'status' => 200,
+                        'success' => true,
+                        'detail' => 'Berhasil masuk! Mohon tunggu Anda akan dialihkan.',
+
+                    ];
+                    echo json_encode($return);
                 } else {
                     $return = [
                         'status' => 200,
                         'success' => false,
-                        'detail' => 'Akun belum diaktivasi'
+                        'detail' => 'Password tidak sesuai!'
                     ];
 
                     echo json_encode($return);
@@ -138,7 +115,7 @@ class Auth extends CI_Controller
 
     public function ajaxregistercheckemail()
     {
-        $user = $this->db->get_where('user', ['email' => $_POST['email']])->num_rows();
+        $user = $this->db->get_where('users', ['email' => $_POST['email']])->num_rows();
         if ($user > 0) {
             $return = [
                 'status' => 200,
@@ -159,7 +136,7 @@ class Auth extends CI_Controller
     {
         // harus berawalan angka 8
         if (strlen($_POST['whatsapp']) > 7) {
-            $user = $this->db->get_where('user', ['whatsapp' => $_POST['whatsapp']])->num_rows();
+            $user = $this->db->get_where('users', ['whatsapp' => $_POST['whatsapp']])->num_rows();
             if ($user > 0) {
                 $return = [
                     'status' => 200,
@@ -198,15 +175,17 @@ class Auth extends CI_Controller
         ];
 
         // siapkan token
-        $token = base64_encode(random_bytes(32));
-        $user_token = [
+        // $token = base64_encode(random_bytes(32));
+        $this->load->helper('string');
+        $otp = random_string('numeric', 6);
+        $user_verify = [
             'email' => $data['email'],
-            'token' => $token,
+            'otp' => $otp,
             'date_created' => date("Y-m-d H:i:s"),
         ];
 
-        $this->db->insert('user', $data);
-        $this->db->insert('user_token', $user_token);
+        $this->db->insert('users', $data);
+        $this->db->insert('user_verify', $user_verify);
 
         $return = [
             'status' => 200,
@@ -218,6 +197,156 @@ class Auth extends CI_Controller
         echo json_encode($return);
     }
 
+    public function activate()
+    {
+        if (!$this->session->userdata('email')) {
+            redirect(base_url('auth'));
+        }
+
+        $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
+        if ($user['is_active'] == 1) {
+            redirect(base_url());
+        }
+        if (isset($_COOKIE['activateWrong'])) {
+            $exp = explode('-', $_COOKIE['activateWrong']);
+            $count = ((int)$exp[1]);
+            if ($count >= 6) {
+                $disableform = 'disabled';
+            } else {
+                $disableform = '';
+            }
+        } else {
+            $disableform = '';
+        }
+
+        $data = [
+            'disabled' => $disableform
+        ];
+        $this->load->view('auth/activate', $data);
+    }
+
+    public function ajaxsendcode()
+    {
+        $method = $_POST['action'];
+        $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+        $verify = $this->db->get_where('user_verify', ['email' => $user['email']]);
+        if ($verify->num_rows() == 0) {
+            $this->load->helper('string');
+            $otp = random_string('numeric', 6);
+            $user_verify = [
+                'email' => $user['email'],
+                'otp' => $otp,
+                'date_created' => date("Y-m-d H:i:s"),
+            ];
+            $this->db->insert('user_verify', $user_verify);
+            $verify = $user_verify;
+        } else {
+            $verify = $verify->row_array();
+        }
+
+        $return = [
+            'status' => 200,
+        ];
+        if ($method == 'send-wa') {
+            if (isset($_COOKIE['activateWa'])) {
+                $exp = explode('-', $_COOKIE['activateWa']);
+                $count = ((int)$exp[1]);
+            } else {
+                $count = 0;
+            }
+
+            if ($count <= 3) {
+                $phone = '62' . $user['whatsapp'];
+                $message = 'Halo ' . $user['name'] . ', berikut ini adalah kode Aktivasi *Damai Jaya - Super App* kamu: *' . $verify['otp'] . '*. Jangan tunjukkan kode ini kepada siapapun termasuk admin dari *Damai Jaya - Super App*';
+                $wa = wa_send($phone, $message);
+                $waObj = json_decode($wa);
+                if ($waObj->data->status_code == 200) {
+                    $return['detail'] = 'Kode aktivasi berhasil dikirim melalui nomor whatsapp Anda.';
+                    $return['success'] = true;
+
+
+                    $cookieval = md5($user['id']) . 'Pa-' . $count + 1 . '-Pc' . md5($user['name']);
+                    setcookie('activateWa', $cookieval, time() + 3600, "/");
+                } else {
+                    $return['detail'] = 'Kode aktivasi gagal dikirim ke nomor whatsapp Anda. Mohon gunakan email untuk aktivasi.';
+                    $return['success'] = false;
+                }
+            } else {
+                $return['detail'] = 'Terlalu banyak permintaan. Ulangi lagi setelah 60 menit.';
+                $return['success'] = false;
+            }
+        } else {
+
+            if (isset($_COOKIE['activateMail'])) {
+                $exp = explode('-', $_COOKIE['activateMail']);
+                $count = ((int)$exp[1]);
+            } else {
+                $count = 0;
+            }
+
+            if ($count <= 3) {
+                $mailArray = mail_send_activate($user['email'], $user['name'], $verify['otp']);
+                if ($mailArray['success'] == true) {
+                    $return['detail'] = 'Kode aktivasi berhasil dikirim melalui email Anda.';
+                    $return['success'] = true;
+                    $cookieval = md5($user['name']) . 'Ce-' . $count + 1 . '-Da' . md5($user['id']);
+                    setcookie('activateMail', $cookieval, time() + 3600, "/");
+                } else {
+                    $return['detail'] = $mailArray['detail'];
+                    $return['success'] = false;
+                }
+            } else {
+                $return['detail'] = 'Terlalu banyak permintaan. Ulangi lagi setelah 60 menit.';
+                $return['success'] = false;
+            }
+        }
+
+        echo json_encode($return);
+    }
+
+    public function ajaxactivate()
+    {
+        $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+        $code = $_POST['code'];
+        $verify = $this->db->get_where('user_verify', ['email' => $user['email']])->row_array();
+        if ($code == $verify['otp']) {
+
+            $this->db->set('is_active', 1);
+            $this->db->where('email', $user['email']);
+            $this->db->update('users');
+
+            $this->db->delete('user_verify', ['email' => $user['email']]);
+
+            $return = [
+                'status' => 200,
+                'success' => true,
+                'detail' => 'Aktivasi akun berhasil.',
+            ];
+        } else {
+            $return = [
+                'status' => 200,
+            ];
+            if (isset($_COOKIE['activateWrong'])) {
+                $exp = explode('-', $_COOKIE['activateWrong']);
+                $count = ((int)$exp[1]);
+            } else {
+                $count = 0;
+            }
+
+            if ($count <= 6) {
+                $cookieval = md5($user['name']) . '-' . $count + 1 . '-' . md5($user['id']);
+                setcookie('activateWrong', $cookieval, time() + 3600, "/");
+                $return['detail'] = 'Kode aktivasi tidak sesuai.';
+                $return['success'] = false;
+            } else {
+                $return['status'] = 201;
+                $return['detail'] = 'Terlalu banyak permintaan. Ulangi lagi setelah 60 menit.';
+                $return['success'] = false;
+            }
+        }
+        echo json_encode($return);
+    }
 
     private function _sendEmail($token, $type)
     {
@@ -259,7 +388,7 @@ class Auth extends CI_Controller
         $email = $this->input->get('email');
         $token = $this->input->get('token');
 
-        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+        $user = $this->db->get_where('users', ['email' => $email])->row_array();
 
         if ($user) {
             $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
@@ -268,14 +397,14 @@ class Auth extends CI_Controller
                 if (time() - $user_token['date_created'] < (60 * 60 * 24)) {
                     $this->db->set('is_active', 1);
                     $this->db->where('email', $email);
-                    $this->db->update('user');
+                    $this->db->update('users');
 
                     $this->db->delete('user_token', ['email' => $email]);
 
                     $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">' . $email . ' has been activated! Please login.</div>');
                     redirect('auth');
                 } else {
-                    $this->db->delete('user', ['email' => $email]);
+                    $this->db->delete('users', ['email' => $email]);
                     $this->db->delete('user_token', ['email' => $email]);
 
                     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Token expired.</div>');
@@ -324,7 +453,7 @@ class Auth extends CI_Controller
             $this->load->view('templates/auth_footer');
         } else {
             $email = $this->input->post('email');
-            $user = $this->db->get_where('user', ['email' => $email, 'is_active' => 1])->row_array();
+            $user = $this->db->get_where('users', ['email' => $email, 'is_active' => 1])->row_array();
 
             if ($user) {
                 $token = base64_encode(random_bytes(32));
@@ -352,7 +481,7 @@ class Auth extends CI_Controller
         $email = $this->input->get('email');
         $token = $this->input->get('token');
 
-        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+        $user = $this->db->get_where('users', ['email' => $email])->row_array();
 
         if ($user) {
             $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
@@ -391,7 +520,7 @@ class Auth extends CI_Controller
 
             $this->db->set('password', $password);
             $this->db->where('email', $email);
-            $this->db->update('user');
+            $this->db->update('users');
 
             $this->session->unset_userdata('reset_email');
 
@@ -400,5 +529,14 @@ class Auth extends CI_Controller
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Password has been changed! Please login.</div>');
             redirect('auth');
         }
+    }
+
+    public function tes()
+    {
+        // print_r(mail_send('cranam21@gmail.com', 'Tes email sam', 'ini isinya'));
+        // require 'vendor/autoload.php';
+        // $mail = new PHPMailer\PHPMailer\PHPMailer();
+        // print_r($mail);
+        echo password_hash('anamsukses21,', PASSWORD_DEFAULT);
     }
 }
