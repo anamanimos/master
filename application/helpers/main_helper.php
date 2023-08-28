@@ -14,7 +14,7 @@ function is_logged_in()
         $role_id = $ci->session->userdata('role_id');
         $menu = $ci->uri->segment(1);
 
-        $queryMenu = $ci->db->get_where('user_menu', ['menu' => $menu])->row_array();
+        $queryMenu = $ci->db->get_where('user_menu', ['slug' => $menu])->row_array();
         $menu_id = $queryMenu['id'];
 
         $userAccess = $ci->db->get_where('user_access_menu', [
@@ -23,9 +23,36 @@ function is_logged_in()
         ]);
 
         if ($userAccess->num_rows() < 1) {
-            redirect('auth/blocked');
+            redirect('auth/blocked?role_id=' . $role_id . '&menuid=' . $menu_id);
         }
     }
+}
+
+function slugify($text, string $divider = '-')
+{
+    // replace non letter or digits by divider
+    $text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+
+    // transliterate
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+    // remove unwanted characters
+    $text = preg_replace('~[^-\w]+~', '', $text);
+
+    // trim
+    $text = trim($text, $divider);
+
+    // remove duplicate divider
+    $text = preg_replace('~-+~', $divider, $text);
+
+    // lowercase
+    $text = strtolower($text);
+
+    if (empty($text)) {
+        return 'n-a';
+    }
+
+    return $text;
 }
 
 

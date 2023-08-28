@@ -1,0 +1,32 @@
+.handle:hover,.handle-submenu:hover{
+    cursor: all-scroll;
+}
+.form-switch.form-submenu .form-check-input{
+    margin-top: 0.1em;
+    height: 1.3em !important;
+}
+@keyframes append-show {
+	from {
+		transform: scaleY(0);
+		opacity: 0;
+	}
+	to {
+		transform: scaleY(1);
+		opacity: 1;
+	}
+}
+@keyframes append-bg-color {
+	from {
+		background-color: rgba(0,201,167,.1);
+	}
+	to {
+		background-color: #fff;
+	}
+}
+.new-append{
+    transform-origin: 50% 0;
+    animation: append-show .3s linear, append-bg-color 5s linear;
+}
+.circles-text{
+	font-size: 14px!important;
+}

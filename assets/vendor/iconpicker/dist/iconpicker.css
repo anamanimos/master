@@ -1,0 +1,14 @@
+.iconpicker-dropdown ul{
+    width: 100% !important;
+    margin-top: 10px ;
+    border-radius:0.75rem;
+    overflow-x: hidden !important;
+
+}
+.iconpicker-dropdown ul::-webkit-scrollbar {
+	width: .6125rem
+}
+
+.iconpicker-dropdown ul::-webkit-scrollbar-thumb {
+	background-color: rgba(189, 197, 209, .6)
+}

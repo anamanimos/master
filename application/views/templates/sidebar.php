@@ -1,79 +1,113 @@
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <!-- ========== MAIN CONTENT ========== -->
+    <main id="content" role="main" class="main">
+        <!-- Navbar Vertical -->
+        <aside class="js-navbar-vertical-aside navbar navbar-vertical-aside navbar-vertical navbar-vertical-fixed navbar-expand-xl navbar-bordered bg-white  ">
+            <div class="navbar-vertical-container">
+                <div class="navbar-vertical-footer-offset">
+                    <!-- Logo -->
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-code"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">WPU Admin</div>
-            </a>
+                    <a class="navbar-brand" href="<?= base_url() ?>" aria-label="Front">
+                        <img class="navbar-brand-logo" src="<?= base_url('assets/svg/logos/logo.svg') ?>" alt="Logo" data-hs-theme-appearance="default" style="min-width: 9rem;max-width: 9rem;">
+                        <img class="navbar-brand-logo-mini" src="<?= base_url('assets/svg/logos/logo-short.svg') ?>" alt="Logo" data-hs-theme-appearance="default">
+                    </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+                    <!-- End Logo -->
 
+                    <!-- Navbar Vertical Toggle -->
+                    <button type="button" class="js-navbar-vertical-aside-toggle-invoker navbar-aside-toggler">
+                        <i class="bi-arrow-bar-left navbar-toggler-short-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Collapse"></i>
+                        <i class="bi-arrow-bar-right navbar-toggler-full-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Expand"></i>
+                    </button>
 
-            <!-- QUERY MENU -->
-            <?php 
-            $role_id = $this->session->userdata('role_id');
-            $queryMenu = "SELECT `user_menu`.`id`, `menu`
+                    <!-- End Navbar Vertical Toggle -->
+
+                    <!-- Content -->
+                    <div class="navbar-vertical-content">
+                        <div id="navbarVerticalMenu" class="nav nav-pills nav-vertical card-navbar-nav">
+
+                            <div class="nav-item">
+                                <a class="nav-link" href="<?= base_url('dashboard') ?>" data-placement="left">
+                                    <i class="bi-house-door nav-icon"></i>
+                                    <span class="nav-link-title">Dashboards</span>
+                                </a>
+                            </div>
+
+                            <!-- QUERY MENU -->
+                            <?php
+                            $role_id = $this->session->userdata('role_id');
+                            $queryMenu = "SELECT `user_menu`.`id`, `menu`
                             FROM `user_menu` JOIN `user_access_menu`
                               ON `user_menu`.`id` = `user_access_menu`.`menu_id`
-                           WHERE `user_access_menu`.`role_id` = $role_id
-                        ORDER BY `user_access_menu`.`menu_id` ASC
+                           WHERE `user_access_menu`.`role_id` = $role_id AND `user_menu`.`is_deleted` = 0
+                        ORDER BY `user_menu`.`sort` ASC
                         ";
-            $menu = $this->db->query($queryMenu)->result_array();
-            ?>
+                            $menu = $this->db->query($queryMenu)->result_array();
+                            ?>
+                            <?php foreach ($menu as $m) :
+                            ?>
 
 
-            <!-- LOOPING MENU -->
-            <?php foreach ($menu as $m) : ?>
-            <div class="sidebar-heading">
-                <?= $m['menu']; ?>
-            </div>
-
-            <!-- SIAPKAN SUB-MENU SESUAI MENU -->
-            <?php 
-            $menuId = $m['id'];
-            $querySubMenu = "SELECT *
+                                <!-- SIAPKAN SUB-MENU SESUAI MENU -->
+                                <?php
+                                $menuId = $m['id'];
+                                $querySubMenu = "SELECT *
                                FROM `user_sub_menu` JOIN `user_menu` 
                                  ON `user_sub_menu`.`menu_id` = `user_menu`.`id`
-                              WHERE `user_sub_menu`.`menu_id` = $menuId
-                                AND `user_sub_menu`.`is_active` = 1
+                              WHERE `user_sub_menu`.`menu_id` = $menuId AND `user_sub_menu`.`is_deleted` = 0
+                                AND `user_sub_menu`.`is_active` = 1 ORDER BY `user_sub_menu`.`sort` ASC
                         ";
-            $subMenu = $this->db->query($querySubMenu)->result_array();
-            ?>
+                                if ($this->db->query($querySubMenu)->num_rows() > 0) {
+                                    $subMenu = $this->db->query($querySubMenu)->result_array();
+                                ?>
+                                    <span class="dropdown-header mt-4"><?= $m['menu']; ?></span>
+                                    <small class="bi-three-dots nav-subtitle-replacer"></small>
+                                    <?php foreach ($subMenu as $sm) : ?>
+                                        <div class="nav-item">
+                                            <a class="nav-link " href="<?= base_url($sm['url']); ?>" data-placement="left">
+                                                <i class="<?= $sm['icon']; ?> nav-icon"></i>
+                                                <span class="nav-link-title"><?= $sm['title']; ?></span>
+                                            </a>
+                                        </div>
+                                    <?php endforeach; ?>
+                            <?php }
+                            endforeach; ?>
 
-            <?php foreach ($subMenu as $sm) : ?>
-            <?php if ($title == $sm['title']) : ?>
-            <li class="nav-item active">
-                <?php else : ?>
-            <li class="nav-item">
-                <?php endif; ?>
-                <a class="nav-link pb-0" href="<?= base_url($sm['url']); ?>">
-                    <i class="<?= $sm['icon']; ?>"></i>
-                    <span><?= $sm['title']; ?></span></a>
-            </li>
-            <?php endforeach; ?>
+                            <span class="dropdown-header mt-4">Pages</span>
+                            <small class="bi-three-dots nav-subtitle-replacer"></small>
+                            <div id="navbarVerticalMenuPagesMenu">
+                                <!-- Collapse -->
+                                <div class="nav-item">
+                                    <a class="nav-link dropdown-toggle " href="#navbarVerticalMenuPagesUsersMenu" role="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalMenuPagesUsersMenu" aria-expanded="false" aria-controls="navbarVerticalMenuPagesUsersMenu">
+                                        <i class="bi-people nav-icon"></i>
+                                        <span class="nav-link-title">Users</span>
+                                    </a>
 
-            <hr class="sidebar-divider mt-3">
+                                    <div id="navbarVerticalMenuPagesUsersMenu" class="nav-collapse collapse " data-bs-parent="#navbarVerticalMenuPagesMenu">
+                                        <a class="nav-link " href="#">Overview</a>
+                                        <a class="nav-link " href="#">Leaderboard</a>
+                                        <a class="nav-link " href="#">Add User <span class="badge bg-info rounded-pill ms-1">Hot</span></a>
+                                    </div>
+                                </div>
+                                <!-- End Collapse -->
+                            </div>
+                            <!-- End Collapse -->
 
-            <?php endforeach; ?>
+                            <span class="dropdown-header mt-4">Apps</span>
+                            <small class="bi-three-dots nav-subtitle-replacer"></small>
 
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('auth/logout'); ?>">
-                    <i class="fas fa-fw fa-sign-out-alt"></i>
-                    <span>Logout</span></a>
-            </li>
+                            <div class="nav-item">
+                                <a class="nav-link " href="#" data-placement="left">
+                                    <i class="bi-kanban nav-icon"></i>
+                                    <span class="nav-link-title">Kanban</span>
+                                </a>
+                            </div>
+                        </div>
 
+                    </div>
+                    <!-- End Content -->
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
             </div>
+        </aside>
 
-        </ul>
-        <!-- End  of Sidebar --> 
+        <!-- End Navbar Vertical -->

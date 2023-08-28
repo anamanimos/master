@@ -14,11 +14,17 @@ _Changelog_
 
 _TODO_
 
-1.
-2.
-3. fixing halaman profile
-4. fixing account setting
-5. mapping role
+1. Menu management
+   --- Edit menu
+   --- Delete Menu  
+   --- tambah submenu
+   --- edit submenu
+   --- delete submenu
+1. fixing halaman profile
+1. fixing account setting
+1. sweet alert
+1. kembalikan ke url semula setelah cek session
+1. mapping role
    ----- Superadmin
    ----- admin
    ---------- Dashboard (Total pendapatan, biaya(% | Rp))
