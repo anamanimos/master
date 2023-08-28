@@ -62,8 +62,15 @@
                                     <span class="dropdown-header mt-4"><?= $m['menu']; ?></span>
                                     <small class="bi-three-dots nav-subtitle-replacer"></small>
                                     <?php foreach ($subMenu as $sm) : ?>
+                                        <?php
+                                        if ($sm['type'] == 'internal') {
+                                            $link = base_url($sm['url']);
+                                        } else {
+                                            $link = $sm['url'];
+                                        }
+                                        ?>
                                         <div class="nav-item">
-                                            <a class="nav-link " href="<?= base_url($sm['url']); ?>" data-placement="left">
+                                            <a class="nav-link " href="<?= $link; ?>" data-placement="left">
                                                 <i class="<?= $sm['icon']; ?> nav-icon"></i>
                                                 <span class="nav-link-title"><?= $sm['title']; ?></span>
                                             </a>

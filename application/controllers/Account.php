@@ -16,7 +16,16 @@ class Account extends CI_Controller
         $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
         $data = [
             'user' => $user,
-            'title' => 'Akun'
+            'title' => 'Akun',
+            'css' => [
+                ''
+            ],
+            'js_plugin' => [
+                ''
+            ],
+            'js_plugin_init' => [
+                ''
+            ]
         ];
 
         $this->load->view('templates/header', $data);
@@ -30,7 +39,16 @@ class Account extends CI_Controller
         $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
         $data = [
             'user' => $user,
-            'title' => 'Setting'
+            'title' => 'Pengaturan Akun',
+            'css' => [
+                ''
+            ],
+            'js_plugin' => [
+                ''
+            ],
+            'js_plugin_init' => [
+                ''
+            ]
         ];
 
         $this->load->view('templates/header', $data);

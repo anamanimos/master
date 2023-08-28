@@ -16,7 +16,16 @@ class Dashboard extends CI_Controller
         $user = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
         $data = [
             'user' => $user,
-            'title' => 'Dashboard'
+            'title' => 'Dashboard',
+            'css' => [
+                ''
+            ],
+            'js_plugin' => [
+                ''
+            ],
+            'js_plugin_init' => [
+                ''
+            ]
         ];
 
         $this->load->view('templates/header', $data);

@@ -1,4 +1,6 @@
 _Changelog_
+2023-08-28 - Fixing menu icon and link broken
+2023-08-28 - Menu management
 2023-08-21 - Kirim email berhasil mengganti password
 2023-08-21 - Lupa katasandi
 2023-08-21 - Kirim WA aktivasi sukses
@@ -14,12 +16,6 @@ _Changelog_
 
 _TODO_
 
-1. Menu management
-   --- Edit menu
-   --- Delete Menu  
-   --- tambah submenu
-   --- edit submenu
-   --- delete submenu
 1. fixing halaman profile
 1. fixing account setting
 1. sweet alert
